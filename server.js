@@ -8,7 +8,14 @@ var Storage = {
     this.items.push(item);
     this.setId += 1;
     return item;
-  } 
+  }, 
+  delete: function(id){
+    for (var i = 0; i < this.items.length; i++) {
+      if (this.items[i].id == id){
+        this.items.splice(i, 1);
+      }
+    }
+  }
 };
 
 var createStorage = function() {
@@ -18,12 +25,14 @@ var createStorage = function() {
   return storage;
 }
 
-var storage = createStorage();
 
+var storage = createStorage();
 storage.add('Broad beans');
 storage.add('Tomatoes');
 storage.add('Peppers');
 
+
+////  Routes ////
 var app = express();
 app.use(express.static('public'));
 
@@ -35,9 +44,15 @@ app.post('/items', jsonParser, function(request, response) {
     if (!('name' in request.body)) {
         return response.sendStatus(400);
     }
-
     var item = storage.add(request.body.name);
     response.status(201).json(item);
 });
+
+app.delete('/items/:id', jsonParser, function(request, response) {
+    if (!(storage.delete(request.params.id))) {
+      return response.sendStatus(404);
+    }
+      response.status(200).json(request.params.id);
+    });
 
 app.listen(process.env.PORT || 8080, process.env.IP);
