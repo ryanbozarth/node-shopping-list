@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
+var Item = {};
 
 var Storage = {
   add: function(name) {
@@ -9,15 +10,23 @@ var Storage = {
     this.setId += 1;
     return item;
   }, 
-  delete: function(id){
+  delete: function(id) {
     for (var i = 0; i < this.items.length; i++) {
-      if (this.items[i].id == id){
-        this.items.splice(i, 1);
-      }
+    if (this.items[i].id == id){
+      this.items.splice(i, 1);
+      return this.items;
+    };
+    };
+  },
+  update: function(id, name) {
+    if(this.items[id]) {
+        this.items[id].name = name;
+    } else {
+        storage.add(name);
     }
+    return this.items;
   }
 };
-
 var createStorage = function() {
   var storage = Object.create(Storage);
   storage.items = [];
@@ -55,4 +64,13 @@ app.delete('/items/:id', jsonParser, function(request, response) {
       response.status(200).json(request.params.id);
     });
 
+app.put('/items/:id', jsonParser, function(request, response) {
+  if (!(storage.put(request.params.id))) {
+    return response.sendStatus(404);
+  }
+  
+    response.status(200).json(request.params.id);
+});
+
 app.listen(process.env.PORT || 8080, process.env.IP);
+console.log('listening on localhost: port 8080');
