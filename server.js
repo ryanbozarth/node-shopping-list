@@ -9,7 +9,7 @@ var Storage = {
     this.items.push(item);
     this.setId += 1;
     return item;
-  }, 
+  },
   delete: function(id) {
     for (var i = 0; i < this.items.length; i++) {
     if (this.items[i].id == id){
@@ -19,14 +19,16 @@ var Storage = {
     };
   },
   update: function(id, name) {
-    if(this.items[id]) {
-        this.items[id].name = name;
-    } else {
-        storage.add(name);
-    }
-    return this.items;
+    for (var i=0; i<this.items.length; i++) {
+          if (this.items[i].id == id) {
+              this.items[i].name = name;
+             return this.items[i];
+          }
+      }
+      return false;
   }
 };
+
 var createStorage = function() {
   var storage = Object.create(Storage);
   storage.items = [];
@@ -65,10 +67,13 @@ app.delete('/items/:id', jsonParser, function(request, response) {
     });
 
 app.put('/items/:id', jsonParser, function(request, response) {
-  if (!(storage.put(request.params.id))) {
+  if (!(storage.update(request.params.id))) {
     return response.sendStatus(404);
   }
-  
+    var item = storage.update(request.params.id, request.body.name);
+    if (item == false) {
+      return response.sendStatus(404);
+    }
     response.status(200).json(request.params.id);
 });
 
