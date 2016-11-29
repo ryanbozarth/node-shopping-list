@@ -32,7 +32,7 @@ var Storage = {
 var createStorage = function() {
   var storage = Object.create(Storage);
   storage.items = [];
-  storage.setId = 1;
+  storage.setId = 0;
   return storage;
 }
 
@@ -74,7 +74,7 @@ app.put('/items/:id', jsonParser, function(request, response) {
     if (item == false) {
       return response.sendStatus(404);
     }
-    response.status(200).json(request.params.id);
+    response.status(200).json(item);
 });
 
 app.listen(process.env.PORT || 8080, process.env.IP);
