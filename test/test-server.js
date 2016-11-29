@@ -53,7 +53,20 @@ describe('Shopping List', function() {
             done();
         });
     });
-    it('should edit an item on put');
+    it('should edit an item on put', function(done){
+        chai.request(app)
+        .get('/items/0')
+        .end(function(err, res){
+        should.equal(err, null);
+        res.should.have.status(200);
+        res.should.be.json;
+        res.body.name.should.be.equal('Broad beans');
+        res.body.should.have.property('id');
+        
+        
+        done();
+        });
+    });
     it('should delete an item on delete');
     it('should not post to an ID that does not exist');
     it('should not post without body data');
