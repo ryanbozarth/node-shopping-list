@@ -55,25 +55,30 @@ app.post('/items', jsonParser, function(request, response) {
     if (!('name' in request.body)) {
         return response.sendStatus(400);
     }
+  for (i = 0; i < storage.items.length; i++) {
+      if (storage.items[i].name == request.body.name){
+        return response.sendStatus(400);
+      }
+    };
     var item = storage.add(request.body.name);
-    response.status(201).json(item);
+    return response.status(201).json(item);
 });
 
 app.delete('/items/:id', jsonParser, function(request, response) {
     if (!(storage.delete(request.params.id))) {
-      return response.sendStatus(404);
+      return response.sendStatus(400);
     }
       response.status(200).json(request.params.id);
     });
 
 app.put('/items/:id', jsonParser, function(request, response) {
-  if (!(storage.update(request.params.id))) {
-    return response.sendStatus(404);
+  if (!(storage.update(request.params.id)) || !request.body || !request.params.id) {
+    return response.sendStatus(400);
   }
+   if (request.params.id !== request.body.id&&request.body.id) {
+       return response.sendStatus(400);
+   }
     var item = storage.update(request.params.id, request.body.name);
-    if (item == false) {
-      return response.sendStatus(404);
-    }
     response.status(200).json(item);
 });
 
