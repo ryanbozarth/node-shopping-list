@@ -77,7 +77,15 @@ describe('Shopping List', function() {
                 done();
             });
     });
-    it('should not post to an ID that does not exist');
+    it('should not post to an ID that already exist', function(done) {
+        chai.request(app)
+            .post('/items')
+            .send({'name': 'Kale', 'id': '7'})
+            .end(function(err, res) {
+                res.should.have.status(400);
+                done();
+        });
+    });
     it('should not post without body data', function(done) {
         chai.request(app)
             .post('/items')
@@ -88,7 +96,15 @@ describe('Shopping List', function() {
                 done();
             });
     });
-    it('should not put without an endpoint');
+    it('should not put without an id in the endpoint', function(done) {
+        chai.request(app)
+        .put('/items')
+        .send({'name': 'Kale'})
+        .end(function(err, res) {
+            res.should.have.status(404);
+            done();
+        })
+    });
     it('should not put with different ID in the endpoint than the body', function(done) {
         chai.request(app)
             .put('/items/0')
@@ -100,7 +116,7 @@ describe('Shopping List', function() {
     });
     it('should not put an id that does not exist', function(done) {
         chai.request(app)
-            .put('/items')
+            .put('/items/4')
             .send({'name': 'coffee', 'id': 4})
             .end(function(err, res){
                 res.should.have.status(400);
@@ -114,13 +130,15 @@ describe('Shopping List', function() {
             .end(function(err, res) {
                 res.should.have.status(400);
                 res.body.should.not.have.property('name');
+                done();
             });
     });
     it('should not put with something other than json', function(done) {
         chai.request(app)
-            .put('/items')
+            .put('/items/14')
             .end(function(err, res) {
-                res.should.be.json;
+                res.should.have.status(400);
+                done();
             });
     });
     it('should not delete an ID that does not exist', function(done) {
